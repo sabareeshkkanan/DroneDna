@@ -1,0 +1,11 @@
+[  {"freqency":200.0,"name":"X2","pinNumber":6,"pinType":"pwm", "max":1900,"min":1100},
+  {"freqency":200.0,"name":"X1","pinNumber":7,"pinType":"pwm","max":1950,"min":1050},
+  {"freqency":200.0,"name":"U","pinNumber":10,"pinType":"pwm","max":1860,"min":1180},
+  {"freqency":200.0,"name":"rudder","pinNumber":11,"pinType":"pwm","max":1950,"min":1050},
+  {"dutyCycleFlag":true,"dutyCycle":0.5,"freqency":50,"name":"throttle","pinNumber":12,"pinType":"pwm","max":1950,"min":1040},
+  {"freqency":200.0,"name":"elevator","pinNumber":13,"pinType":"pwm","max":1950,"min":1050},
+  {"freqency":200.0,"name":"aileron","pinNumber":14,"pinType":"pwm","max":1950,"min":1050},
+  {"name":"led","pinNumber":0,"pinType":"digital"}
+
+
+]

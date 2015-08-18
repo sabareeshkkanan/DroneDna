@@ -1,0 +1,6 @@
+{
+  "gps":1.0,
+  "attitude":0.5,
+  "manual":0.02,
+  "failSafe":0.25
+}

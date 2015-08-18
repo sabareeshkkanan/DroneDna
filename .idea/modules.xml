@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DroneDna.iml" filepath="$PROJECT_DIR$/DroneDna.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iOIOLibAccessory-release/iOIOLibAccessory-release.iml" filepath="$PROJECT_DIR$/iOIOLibAccessory-release/iOIOLibAccessory-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iOIOLibAndroid-release/iOIOLibAndroid-release.iml" filepath="$PROJECT_DIR$/iOIOLibAndroid-release/iOIOLibAndroid-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iOIOLibAndroidDevice-release/iOIOLibAndroidDevice-release.iml" filepath="$PROJECT_DIR$/iOIOLibAndroidDevice-release/iOIOLibAndroidDevice-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iOIOLibBT-release/iOIOLibBT-release.iml" filepath="$PROJECT_DIR$/iOIOLibBT-release/iOIOLibBT-release.iml" />
+    </modules>
+  </component>
+</project>

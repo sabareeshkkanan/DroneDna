@@ -1,0 +1,11 @@
+{
+  "X2":0.5,
+  "X1":0.0,
+  "U":0.5,
+  "rudder":0.5,
+  "throttle":0.5,
+  "elevator":0.5,
+  "aileron":0.5,
+  "led":true
+
+}
