@@ -44,7 +44,8 @@ public class Looper extends BaseIOIOLooper {
     protected void setup() throws ConnectionLostException {
         showVersions(ioio_, "IOIO connected!");
         pinManager=new PinManager(ioio_,configManager.getPinInformationList());
-        model= SignalModelHandle.CreateModel();
+
+        model=SignalModelHandle.getModel();
         model.setControls(configManager.getDefaultValues());
 
     }

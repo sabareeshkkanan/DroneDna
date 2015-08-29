@@ -5,6 +5,8 @@ import android.content.res.AssetManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sabareesh.dronedna.hardware.PinInformation;
+import com.sabareesh.dronedna.hardware.SignalModelHandle;
+import com.sabareesh.dronedna.models.FlightWarmSetting;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +24,7 @@ public class ConfigurationManager {
     List<PinInformation> pinInformationList;
     Map<String,Object> defaultValues;
     private Map<String,Object>  armingSetting;
+    private FlightWarmSetting flightWarmSetting;
 
     public Map<String, Double> getControlModes() {
         return controlModes;
@@ -86,11 +89,13 @@ public class ConfigurationManager {
     }
     public static void setConfigurationManager(AssetManager manager) throws IOException {
         _manager=new ConfigurationManager(manager);
+
     }
 
     private ConfigurationManager(AssetManager manager) throws IOException {
        this.manager=manager;
        loadConfigs();
+        SignalModelHandle.CreateModel();
    }
     private void loadConfigs() throws IOException {
         String pinConfig=loadJSONFromAsset("pinConfig.json");
@@ -101,6 +106,7 @@ public class ConfigurationManager {
         defaultValues=mapper.readValue(pinDefaultValues, new TypeReference<HashMap<String,Object>>() {});
         armingSetting=mapper.readValue(armingConfig, new TypeReference<HashMap<String,Object>>() {});
         controlModes=mapper.readValue(controlModesConfig, new TypeReference<HashMap<String,Double>>() {});
+        flightWarmSetting=mapper.readValue(loadJSONFromAsset("FlightWarmSetting.json"), FlightWarmSetting.class);
 
     }
     private void setSignalModel(){
@@ -122,4 +128,7 @@ public class ConfigurationManager {
         return json;
     }
 
+    public FlightWarmSetting getFlightWarmSetting() {
+        return flightWarmSetting;
+    }
 }

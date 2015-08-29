@@ -1,9 +1,18 @@
 package com.sabareesh.dronedna;
+import com.sabareesh.dronedna.Controller.FlightController;
 import com.sabareesh.dronedna.DisplayUtils.Disp;
 import com.sabareesh.dronedna.DisplayUtils.ViewSetter;
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.Looper.*;
+import com.sabareesh.dronedna.deviceSensor.Gps;
+import com.sabareesh.dronedna.deviceSensor.SensorMan;
+
+import android.content.Context;
+import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
@@ -18,6 +27,8 @@ public class MainActivity extends IOIOActivity {
 
 
     ViewSetter viewSetup;
+
+
     /**
      * Called when the activity is first created. Here we normally initialize
      * our GUI.
@@ -25,12 +36,24 @@ public class MainActivity extends IOIOActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupConfig();
         setContentView(R.layout.main);
+        setupDeviceSensor();
         setViews();
         setDispUtil();
-        setupConfig();
 
 
+
+
+
+    }
+
+
+
+    private void setupDeviceSensor() {
+        Gps.setInstance((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+        SensorMan.setInstance(this);
+        Log.d("ss", SensorManager.getAltitude(1000f,951f)+" "+SensorManager.getAltitude(1000f,950f));
     }
 
     private void setupConfig() {
@@ -55,7 +78,8 @@ public class MainActivity extends IOIOActivity {
         viewSetup.getSeekBarMap().put("elevator",(SeekBar) findViewById(R.id.elevator));
         viewSetup.getSeekBarMap().put("rudder",(SeekBar) findViewById(R.id.rudder));
         viewSetup.setArmer((ToggleButton) findViewById(R.id.arm));
-        viewSetup.setControlSwitch((ToggleButton)findViewById(R.id.U));
+        viewSetup.setControlSwitch((ToggleButton) findViewById(R.id.U));
+        viewSetup.setAutoPilot((ToggleButton)findViewById(R.id.autoPilot));
         viewSetup.setEvents();
 
 

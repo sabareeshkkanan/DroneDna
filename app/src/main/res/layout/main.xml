@@ -31,12 +31,16 @@
 
         </ToggleButton>
         <ToggleButton android:text="ToggleButton"
-            android:textOn="U on"
-            android:textOff="U Off"
+
             android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/U" android:enabled="true">
 
         </ToggleButton>
+        <ToggleButton android:text="ToggleButton"
+            android:textOn="Ap On"
+            android:textOff="Ap Off"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/autoPilot" android:enabled="true">
 
+        </ToggleButton>
 
 
     </LinearLayout>

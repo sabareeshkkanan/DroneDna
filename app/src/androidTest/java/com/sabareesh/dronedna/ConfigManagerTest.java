@@ -19,7 +19,7 @@ public class ConfigManagerTest extends InstrumentationTestCase {
 
 
     public void test() throws JsonProcessingException {
-        ConfigurationManager tt=new ConfigurationManager();
+        ConfigurationManager tt=ConfigurationManager.get_manager();
         PinInformation info=new PinInformation();
         info.setName("throttle");
         info.setDutyCycle(0.5f);

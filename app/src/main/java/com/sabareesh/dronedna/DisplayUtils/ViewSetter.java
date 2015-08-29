@@ -6,6 +6,7 @@ import android.widget.SeekBar;
 import android.widget.ToggleButton;
 import android.os.Handler;
 
+import com.sabareesh.dronedna.Controller.FlightController;
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.hardware.SignalModelHandle;
 
@@ -25,6 +26,9 @@ public  class ViewSetter {
     private ToggleButton controlSwitch;
     int csStat=0;
     int cstahelper=1;
+    Thread flightControllerThread;
+    FlightController controller;
+    private ToggleButton autoPilot;
 
     public Map<String, SeekBar> getSeekBarMap() {
         return seekBarMap;
@@ -46,6 +50,7 @@ public  class ViewSetter {
 
     public ViewSetter(){
         seekBarMap=new HashMap<>();
+        controller=new FlightController();
     }
     public void setEvents(){
         for (String key : seekBarMap.keySet()) {
@@ -59,7 +64,9 @@ public  class ViewSetter {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                SignalModelHandle.getModel().getControls().put(key, ((double) progress / (double) seekBar.getMax()));
+                double v= ((double) progress / (double) seekBar.getMax());
+                SignalModelHandle.getModel().getControls().put(key,v);
+                Log.d("seekValue",v+"");
             }
 
             @Override
@@ -125,8 +132,8 @@ public  class ViewSetter {
                 final Runnable r = new Runnable() {
                     public void run() {
 
-                        if(armer.isChecked())
-                        SignalModelHandle.getModel().setControls(ConfigurationManager.get_manager().getArmingSetting());
+                        if (armer.isChecked())
+                            SignalModelHandle.getModel().setControls(ConfigurationManager.get_manager().getArmingSetting());
                         else
                             SignalModelHandle.getModel().setControls(ConfigurationManager.get_manager().getDefaultValues());
                         //Write(write);
@@ -136,10 +143,34 @@ public  class ViewSetter {
 
             }
         });
+        autoPilot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Handler handler = new Handler();
 
+                final Runnable r = new Runnable() {
+                    public void run() {
+
+                        if (autoPilot.isChecked())
+                            setupFlightController();
+                        else
+                            controller.Stop();
+                        //Write(write);
+                    }
+                };
+                handler.post(r);
+
+            }
+        });
 
     }
+    private void setupFlightController() {
 
+        flightControllerThread=new Thread(controller);
+        flightControllerThread.start();
+        //   handler.post(controller);
+
+    }
     public void setArmer(ToggleButton armer) {
         this.armer = armer;
     }
@@ -154,5 +185,13 @@ public  class ViewSetter {
 
     public ToggleButton getControlSwitch() {
         return controlSwitch;
+    }
+
+    public void setAutoPilot(ToggleButton autoPilot) {
+        this.autoPilot = autoPilot;
+    }
+
+    public ToggleButton getAutoPilot() {
+        return autoPilot;
     }
 }
