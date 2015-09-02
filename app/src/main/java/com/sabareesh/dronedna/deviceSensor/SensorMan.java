@@ -1,10 +1,11 @@
 package com.sabareesh.dronedna.deviceSensor;
 
 import android.content.Context;
+import android.hardware.GeomagneticField;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
+import android.location.Location;
 
 import java.math.BigDecimal;
 
@@ -14,6 +15,13 @@ public class SensorMan implements SensorEventListener {
 	Context mContext;
 	float[] gravity = new float[3];
 	float[] geomag = new float[3];
+    float[] orientVals = new float[3];
+    private double compassHeading;
+    private double compassSmoothing =10;
+    private double pressureSmoothing=5;
+    public double getCompassHeading() {
+        return compassHeading;
+    }
 
     public float[] getGravity() {
         return gravity;
@@ -38,7 +46,7 @@ public class SensorMan implements SensorEventListener {
     public void setPressure(float pressure) {
         this.pressure = pressure;
     }
-
+    private double declination;
     private float pressure;
 	static SensorMan sensorMan;
 	public static void setInstance(Context context){
@@ -55,12 +63,14 @@ sensorMan =new SensorMan(context);
 		mContext=context;
 		 mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
 int updateSpeed=SensorManager.SENSOR_DELAY_GAME;
-	//	 mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(SensorMan.TYPE_GRAVITY),                updateSpeed);
+		 mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_GRAVITY),                updateSpeed);
 
 		 mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_MAGNETIC_FIELD),
                  updateSpeed);
 		mSensorManager.registerListener(this,mSensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_PRESSURE),updateSpeed);
-	
+        Location loc=Gps.getInstance().getLocation();
+        GeomagneticField field=new GeomagneticField((float)loc.getLatitude(),(float)loc.getLongitude(),(float)loc.getAltitude(),System.currentTimeMillis() / 1000L);
+	declination=field.getDeclination();
 	}
 	
 	@Override
@@ -80,21 +90,44 @@ int updateSpeed=SensorManager.SENSOR_DELAY_GAME;
 		      
 		        case android.hardware.Sensor.TYPE_MAGNETIC_FIELD:
 		            geomag = event.values.clone();
+                    boolean success = SensorManager.getRotationMatrix(inR, I,
+                            gravity, geomag);
+                    if(success){
+                        SensorManager.getOrientation(inR, orientVals);
+
+                        updateCompassHeading(round(Math.toDegrees(orientVals[0]),1));
+
+
+                    }
+
 		            break; 
 		            case android.hardware.Sensor.TYPE_GRAVITY:
 		        	  gravity = event.values.clone();
 			            break;
 				case android.hardware.Sensor.TYPE_PRESSURE:
-					 pressure = event.values[0];
 
-                //    Log.d("pressure",SensorManager.getAltitude(1013.25f,pressure)+" "+pressure);
+                    updatePressure(event.values[0]);
+
 					break;
 		    }
 
-
-				
 	}
-	public static float round(double d, int decimalPlace) {
+
+    private void updateCompassHeading(double newValue) {
+       newValue=newValue+declination;
+        //convert to 0 to 360 from -180 to 180
+        newValue=(newValue+360)%360;
+        double difference=newValue - compassHeading;
+        if(difference<50&&difference>-50)
+        compassHeading += difference / compassSmoothing;
+        else
+            compassHeading=newValue;
+    }
+    private void updatePressure(double sensorValue){
+        pressure+=(sensorValue-pressure)/pressureSmoothing;
+    }
+
+    public static float round(double d, int decimalPlace) {
         BigDecimal bd = new BigDecimal(Double.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);       
         return bd.floatValue();

@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.FlightWarmup.SetupHome;
+import com.sabareesh.dronedna.deviceSensor.SensorMan;
 import com.sabareesh.dronedna.hardware.SignalModelHandle;
+import com.sabareesh.dronedna.models.GeoLocation;
 
 /**
  * Created by sabareesh on 8/22/15.
@@ -15,14 +17,38 @@ public class FlightController implements Runnable {
     private int loopSleepTime=500;
     private boolean armed;
     private  AltitudeController altitudeController;
+    private SteeringController steeringController;
 
 private Thread looperThread;
     public FlightController(){
-    altitudeController=new AltitudeController();
-        altitudeController.setDesiredAltitude(228);
+
+        GeoLocation geoLocation = getGeoLocation();
+
+
+        altitudeController=new AltitudeController();
+        altitudeController.setDesiredAltitude(geoLocation.getAltitude());
+        steeringController=new SteeringController();
+
+        steeringController.setDesiredLocation(geoLocation);
     }
+
+    private GeoLocation getGeoLocation() {
+        GeoLocation geoLocation=new GeoLocation();
+        geoLocation.setAltitude(250);
+        geoLocation.setLatitude(33.143573);
+        geoLocation.setLongitude(-117.085506);
+        return geoLocation;
+    }
+
     public void Start(){
+        if(loop==true)
+            return;
         loop=true;
+
+        altitudeController.startLoop();
+        steeringController.startLoop();
+
+
         looperThread=new Thread(new Runnable() {
             @Override
             public void run() {
@@ -33,13 +59,14 @@ private Thread looperThread;
                 }
             }
         });
-        looperThread.start();
+       // looperThread.start();
 
 
     }
     private void looper() throws InterruptedException {
         while (loop){
-            altitudeController.run();
+           // altitudeController.execute();
+            Log.d("compass",""+SensorMan.getSensor().getCompassHeading());
             Thread.sleep(loopSleepTime);
         }
     }
@@ -81,6 +108,9 @@ private Thread looperThread;
     }
 
     public void Stop() {
+
         loop=false;
+        altitudeController.setLoop(false);
+        steeringController.setLoop(false);
     }
 }

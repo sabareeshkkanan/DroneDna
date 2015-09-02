@@ -1,30 +1,20 @@
 package com.sabareesh.dronedna.Controller;
-
-import android.location.Location;
 import android.util.Log;
-
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
-import com.sabareesh.dronedna.deviceSensor.Gps;
-import com.sabareesh.dronedna.deviceSensor.SensorMan;
-import com.sabareesh.dronedna.hardware.SignalModel;
-import com.sabareesh.dronedna.hardware.SignalModelHandle;
 import com.sabareesh.dronedna.models.HomeLocation;
 
 /**
  * Created by sabareesh on 8/18/15.
  */
-public class AltitudeController extends Controller implements Runnable{
+public class AltitudeController extends Controller {
 
     double currentAltitude;
 
-    private double previousPid;
-    private double acceleration;
+
     private final double idleThrottle;
     double desiredAltitude;
     public AltitudeController(){
-        location= Gps.getInstance().getLocation();
-        sensors=SensorMan.getSensor();
-        signalModel= SignalModelHandle.getModel();
+       super();
         idleThrottle= (double) ConfigurationManager.getConfigManager().getDefaultValues().get("throttle");
         pidController=new PIDController(5,1,0.5);
         pidController.enable();
@@ -40,44 +30,31 @@ public class AltitudeController extends Controller implements Runnable{
 
 
     @Override
-    public void run() {
+    public void execute() {
         initialize();
         process();
     }
     private void process(){
-
-        double tFinal =getFinal();
+        compute();
+        double tFinal =idleThrottle+acceleration;
         signalModel.setPWMValue("throttle", tFinal);
 
     }
 
-    private double getFinal() {
-        pidController.getInput(currentAltitude);
+    private void compute() {
+        pidController.setInput(currentAltitude);
         double es=pidController.performPID()/100;
-        Log.d("alt", "des " + desiredAltitude + " " + currentAltitude);
-        double tValue=es-previousPid;
-        if(acceleration>=0) {
-            if (tValue > 0)
-             acceleration += tValue;
+        //Log.d("alt", "des " + desiredAltitude + " " + currentAltitude);
+        double pidDiff=es-previousPid;
+        accelerationComputation(pidDiff);
 
-            else
-                acceleration = 0;
-        }else {
-            if(tValue<0)
-                acceleration+=tValue;
-            else
-                acceleration=0;
-        }
-     if(acceleration>0.5)
-            acceleration=0.5;
-        else if(acceleration<-0.5)
-         acceleration=-0.5;
-
-        double tFinal=idleThrottle+acceleration;
-        Log.d("pidController",""+es+" "+tValue+" "+tFinal);
+        //double tFinal=idleThrottle+acceleration;
+       // Log.d("pidController", "" + es + " " + pidDiff +" "+tFinal);
         previousPid=es;
-        return tFinal;
+
     }
+
+
 
 
     protected void initialize(){
@@ -85,5 +62,23 @@ public class AltitudeController extends Controller implements Runnable{
     }
     private void findCurrentAltitude(){
         currentAltitude=HomeLocation.findAltitude(sensors.getPressure());
+    }
+    protected void accelerationComputation(double pidDiff) {
+        if(acceleration>=0) {
+            if (pidDiff > 0)
+                acceleration += pidDiff;
+
+            else
+                acceleration = 0;
+        }else {
+            if(pidDiff<0)
+                acceleration+=pidDiff;
+            else
+                acceleration=0;
+        }
+        if(acceleration>0.5)
+            acceleration=0.5;
+        else if(acceleration<-0.5)
+            acceleration=-0.5;
     }
 }

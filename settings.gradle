@@ -1,1 +1,1 @@
-include ':app', ':iOIOLibAndroid-release', ':iOIOLibAndroidDevice-release', ':iOIOLibAccessory-release', ':iOIOLibBT-release'
+include ':app', ':iOIOLibAndroid-release', ':iOIOLibAndroidDevice-release', ':iOIOLibAccessory-release', ':iOIOLibBT-release', ':informationmanager'

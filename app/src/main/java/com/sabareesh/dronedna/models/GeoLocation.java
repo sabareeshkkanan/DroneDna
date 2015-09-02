@@ -16,6 +16,14 @@ public class GeoLocation {
     private double longitude;
     private double gpsAltitude;
 
+    public GeoLocation(double latitude, double longitude) {
+        this.latitude=latitude;
+        this.longitude=longitude;
+    }
+    public GeoLocation(){
+
+    }
+
     public void setLocation(Location location){
         latitude=location.getLatitude();
         longitude=location.getLongitude();

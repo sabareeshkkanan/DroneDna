@@ -15,7 +15,7 @@ import ioio.lib.util.BaseIOIOLooper;
  * Created by sabareesh on 8/14/15.
  */
 /**
- * This is the thread on which all the IOIO activity happens. It will be run
+ * This is the thread on which all the IOIO activity happens. It will be execute
  * every time the application is resumed and aborted when it is paused. The
  * method setup() will be called right after a connection with the IOIO has
  * been established (which might happen several times!). Then, loop() will

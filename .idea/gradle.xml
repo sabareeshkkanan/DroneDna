@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/iOIOLibAndroid-release" />
             <option value="$PROJECT_DIR$/iOIOLibAndroidDevice-release" />
             <option value="$PROJECT_DIR$/iOIOLibBT-release" />
+            <option value="$PROJECT_DIR$/informationmanager" />
           </set>
         </option>
       </GradleProjectSettings>

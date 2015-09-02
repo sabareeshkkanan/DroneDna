@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/iOIOLibAndroid-release/iOIOLibAndroid-release.iml" filepath="$PROJECT_DIR$/iOIOLibAndroid-release/iOIOLibAndroid-release.iml" />
       <module fileurl="file://$PROJECT_DIR$/iOIOLibAndroidDevice-release/iOIOLibAndroidDevice-release.iml" filepath="$PROJECT_DIR$/iOIOLibAndroidDevice-release/iOIOLibAndroidDevice-release.iml" />
       <module fileurl="file://$PROJECT_DIR$/iOIOLibBT-release/iOIOLibBT-release.iml" filepath="$PROJECT_DIR$/iOIOLibBT-release/iOIOLibBT-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/informationmanager/informationmanager.iml" filepath="$PROJECT_DIR$/informationmanager/informationmanager.iml" />
     </modules>
   </component>
 </project>
