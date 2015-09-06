@@ -13,7 +13,7 @@ public class LatitudeController extends Controller {
     private double desiredLatitude;
 
     public  LatitudeController(){
-        pidController=new PIDController(100000,1000,10);
+        pidController=new PIDController(10000,1000,10);
         pidController.enable();
         pidController.setInputRange(-90, 90);
         pidController.setOutputRange(-50,50);
@@ -36,20 +36,16 @@ public class LatitudeController extends Controller {
         pidController.setInput(latitude);
         double current=pidController.performPID()/100;
 
-        acceleration=GeometryHelper.round(current);
-
-   /*
         double pidDiff=current-previousPid;
-        previousPid=current;
-        pidDiff= GeometryHelper.round(pidDiff);
+
+        pidDiff= GeometryHelper.round(pidDiff); previousPid=current;
         if(pidDiff>0.5)
             return;
         else if (pidDiff<-0.5)
             return;
-        accelerationComputation(pidDiff);*/
-   //     Log.d("lattitudePID"," accuracy "+Gps.getInstance().getLocation().getAccuracy()+" active "+Gps.getInstance().getActiveSatellites()+" in "+latitude+" des "+desiredLatitude+" curr "+current+" prev "+previousPid+" diff "+pidDiff+" acc "+acceleration);
 
-        Log.d("lattitudePID"," accuracy "+Gps.getInstance().getLocation().getAccuracy()+" active "+Gps.getInstance().getActiveSatellites()+" in "+latitude+" des "+desiredLatitude+" curr "+current+" acc "+acceleration);
+        accelerationComputation(pidDiff);
+
     }
 
     protected void initialize() {
@@ -68,6 +64,27 @@ public class LatitudeController extends Controller {
         pidController.setSetpoint(desiredLatitude);
     }
     protected void accelerationComputation(double pidDiff) {
+        if(acceleration>=0) {
+            if (pidDiff > 0)
+                acceleration += pidDiff;
 
+            else
+            {
+                acceleration = 0;
+                acceleration+=pidDiff;
+            }
+        }else {
+            if(pidDiff<0)
+                acceleration+=pidDiff;
+            else
+            {
+                acceleration=0;
+                acceleration+=pidDiff;
+            }
+        }
+        if(acceleration>0.5)
+            acceleration=0.5;
+        else if(acceleration<-0.5)
+            acceleration=-0.5;
     }
 }

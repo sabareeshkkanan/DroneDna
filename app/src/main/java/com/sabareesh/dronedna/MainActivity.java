@@ -1,17 +1,22 @@
 package com.sabareesh.dronedna;
-import com.sabareesh.dronedna.Controller.FlightController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sabareesh.dronedna.DisplayUtils.Disp;
 import com.sabareesh.dronedna.DisplayUtils.ViewSetter;
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.Looper.*;
 import com.sabareesh.dronedna.deviceSensor.Gps;
 import com.sabareesh.dronedna.deviceSensor.SensorMan;
+import com.sabareesh.hotSpot.HotSpotManager;
+import com.sabareesh.serverlib.DroneServer;
 
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.SeekBar;
@@ -27,6 +32,7 @@ public class MainActivity extends IOIOActivity {
 
 
     ViewSetter viewSetup;
+    private HotSpotManager hotSpotManager;
 
 
     /**
@@ -41,13 +47,38 @@ public class MainActivity extends IOIOActivity {
         setupDeviceSensor();
         setViews();
         setDispUtil();
-
+       setupServer();
 
 
 
 
     }
 
+ private void setupServer() {
+     try {
+         hotSpotManager=new HotSpotManager(this);
+         WifiConfiguration configuration=new WifiConfiguration();
+   configuration.SSID="DroneDna";
+         configuration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+         configuration.preSharedKey="hydrogen";
+
+         final ObjectMapper mapper=new ObjectMapper();
+         hotSpotManager.setWifiApState(configuration, true);
+
+
+
+
+     } catch (NoSuchMethodException e) {
+         e.printStackTrace();
+     }
+     try {
+            DroneServer server=new DroneServer(10000);
+            Thread th=new Thread(server);
+            th.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     private void setupDeviceSensor() {

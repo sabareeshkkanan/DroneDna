@@ -1,4 +1,4 @@
-package com.sabareesh.dronedna.models;
+package com.sabareesh.commonlib;
 
 /**
  * Created by sabareesh on 8/31/15.

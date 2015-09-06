@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.sabareesh.commonlib.ControllerStats;
 import com.sabareesh.dronedna.models.GeoLocation;
 
 /**
@@ -15,6 +16,7 @@ import com.sabareesh.dronedna.models.GeoLocation;
  */
 public class Gps {
     private static Gps _instance;
+    private final ControllerStats stats;
     LocationManager manager;
     private Location location;
     private double latitude;
@@ -58,6 +60,7 @@ public GeoLocation getSmoothLocation(){
     }
 
     private Gps(LocationManager manager){
+        stats= ControllerStats.getInstance();
         this.manager=manager;
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100,0,new MyLocationListener());
         manager.addGpsStatusListener(new GpsStatusListener());
@@ -94,7 +97,7 @@ public GeoLocation getSmoothLocation(){
             setLocation(location);
             smoother();
             updateRecently=true;
-
+            stats.setGpsAccuracy(location.getAccuracy());
 
         }
 
@@ -128,6 +131,8 @@ public GeoLocation getSmoothLocation(){
         }
         activeSatellites=satellitesInFix;
         visibleSatellites=satellites;
+        stats.setActiveSat(activeSatellites);
+        stats.setVisibleSat(visibleSatellites);
     }
 
     private void smoother() {

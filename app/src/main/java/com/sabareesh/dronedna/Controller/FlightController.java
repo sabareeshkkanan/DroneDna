@@ -34,7 +34,7 @@ private Thread looperThread;
 
     private GeoLocation getGeoLocation() {
         GeoLocation geoLocation=new GeoLocation();
-        geoLocation.setAltitude(250);
+        geoLocation.setAltitude(226);
         geoLocation.setLatitude(33.143573);
         geoLocation.setLongitude(-117.085506);
         return geoLocation;

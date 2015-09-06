@@ -2,6 +2,7 @@ package com.sabareesh.dronedna.models;
 
 import android.location.Location;
 
+import com.sabareesh.commonlib.Point;
 import com.sabareesh.dronedna.WebService.GeoAltitude;
 
 import java.io.IOException;
@@ -68,5 +69,8 @@ public class GeoLocation {
 
     public void setGpsAltitude(double gpsAltitude) {
         this.gpsAltitude = gpsAltitude;
+    }
+    public Point getPoint(){
+        return new Point(latitude,longitude);
     }
 }

@@ -2,12 +2,13 @@ package com.sabareesh.dronedna.Controller;
 
 import android.util.Log;
 
+import com.sabareesh.commonlib.ControllerStats;
+import com.sabareesh.commonlib.Point;
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.helpers.GeometryHelper;
 import com.sabareesh.dronedna.deviceSensor.Gps;
 import com.sabareesh.dronedna.deviceSensor.SensorMan;
 import com.sabareesh.dronedna.models.GeoLocation;
-import com.sabareesh.dronedna.models.Point;
 
 /**
  * Created by sabareesh on 8/30/15.
@@ -60,8 +61,9 @@ public class SteeringController extends Controller {
 
 
     private void OrientationComputation() {
-
-        double angle=GeometryHelper.angleBetween(Gps.getInstance().getSmoothLocation(), desiredLocation)-90;
+        ControllerStats stats=ControllerStats.getInstance();
+        GeoLocation currentLocation=Gps.getInstance().getSmoothLocation();
+        double angle=GeometryHelper.angleBetween(currentLocation, desiredLocation)-90;
         double compass=SensorMan.getSensor().getCompassHeading();
         double correctedOrientation=angle+compass;
 
@@ -70,7 +72,27 @@ public class SteeringController extends Controller {
         double accelerationRadius = GeometryHelper.distance(controlCenter, acceleration);
     //    accelerationRadius=0.5;
          finalControlPoint=GeometryHelper.computePoint(controlCenter,accelerationRadius,correctedOrientation);
-        Log.d("steering","Angle "+angle+" compass "+compass+" correcetd "+correctedOrientation+" accRadius "+accelerationRadius+" final "+finalControlPoint.getX()+" Y "+finalControlPoint.getY());
+
+
+
+        stats.setAccelerationRadius(accelerationRadius);
+        stats.setCurrentLocation(currentLocation.getPoint());
+        stats.setDesiredLocation(desiredLocation.getPoint());
+        stats.setCorrectedAngle(correctedOrientation);
+        stats.setFinalPoint(finalControlPoint);
+        stats.setCompassHeading(compass);
+        stats.setLatitudeAcceleration(acceleration.getX());
+        stats.setLongitudeAcceleration(acceleration.getY());
+
+
+
+
+
+
+
+
+
+        //Log.d("steering","Angle "+angle+" compass "+compass+" correcetd "+correctedOrientation+" accRadius "+accelerationRadius+" final "+finalControlPoint.getX()+" Y "+finalControlPoint.getY());
 
     }
     private void applySignals(){
