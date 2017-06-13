@@ -1,34 +1,31 @@
 package com.sabareesh.dronedna;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sabareesh.dronedna.DisplayUtils.Disp;
-import com.sabareesh.dronedna.DisplayUtils.ViewSetter;
-import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
-import com.sabareesh.dronedna.Looper.*;
-import com.sabareesh.dronedna.deviceSensor.Gps;
-import com.sabareesh.dronedna.deviceSensor.SensorMan;
-import com.sabareesh.hotSpot.HotSpotManager;
-import com.sabareesh.serverlib.DroneServer;
-
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sabareesh.dronedna.Controller.BaseStationSignalProcessor;
+import com.sabareesh.dronedna.DisplayUtils.Disp;
+import com.sabareesh.dronedna.DisplayUtils.ViewSetter;
+import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
+import com.sabareesh.dronedna.Looper.Looper;
+import com.sabareesh.dronedna.deviceSensor.Gps;
+import com.sabareesh.dronedna.deviceSensor.SensorMan;
+import com.sabareesh.hotSpot.HotSpotManager;
+import com.sabareesh.serverlib.DroneServer;
 
 import java.io.IOException;
 
-import ioio.lib.util.IOIOLooper;
-import ioio.lib.util.android.IOIOActivity;
 
-public class MainActivity extends IOIOActivity {
+import android.support.v7.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
 
 
     ViewSetter viewSetup;
@@ -48,13 +45,19 @@ public class MainActivity extends IOIOActivity {
         setViews();
         setDispUtil();
        setupServer();
-
+        setupBaseStationSignalProcessor();
 
 
 
     }
 
- private void setupServer() {
+    private void setupBaseStationSignalProcessor() {
+        BaseStationSignalProcessor processor=new BaseStationSignalProcessor();
+        Thread bthres=new Thread(processor);
+        bthres.start();
+    }
+
+    private void setupServer() {
      try {
          hotSpotManager=new HotSpotManager(this);
          WifiConfiguration configuration=new WifiConfiguration();
@@ -102,7 +105,7 @@ public class MainActivity extends IOIOActivity {
     }
 
     public void setViews(){
-        viewSetup=new ViewSetter();
+        viewSetup=ViewSetter.getInstance();
         viewSetup.setLedButton((ToggleButton) findViewById(R.id.ledButton));
         viewSetup.getSeekBarMap().put("throttle", (SeekBar) findViewById(R.id.throttle));
         viewSetup.getSeekBarMap().put("aileron", (SeekBar) findViewById(R.id.aileron));
@@ -117,16 +120,7 @@ public class MainActivity extends IOIOActivity {
     }
 
 
-    /**
-     * A method to create our IOIO thread.
-     *
-     * @see ioio.lib.util.AbstractIOIOActivity#createIOIOThread()
-     */
-    @Override
-    protected IOIOLooper createIOIOLooper() {
 
-        return new Looper();
-    }
 
 
 

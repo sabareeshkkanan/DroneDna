@@ -1,7 +1,7 @@
 package com.sabareesh.dronedna.helpers;
 
 import com.sabareesh.commonlib.Point;
-import com.sabareesh.dronedna.models.GeoLocation;
+import com.sabareesh.commonlib.models.GeoLocation;
 
 
 /**
@@ -86,6 +86,9 @@ public class GeometryHelper {
     }
     public static double round1D(double input){
         return (double)Math.round(input * 10) / 10;
+    }
+    public static double round2D(double input){
+        return (double)Math.round(input * 100) / 100;
     }
 
     public static double angleBetween(GeoLocation currentLocation, GeoLocation desiredLocation) {

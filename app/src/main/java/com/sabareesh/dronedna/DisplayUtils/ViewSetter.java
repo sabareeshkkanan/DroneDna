@@ -46,9 +46,13 @@ public  class ViewSetter {
         this.ledButton = ledButton;
     }
 
+    private static ViewSetter ourInstance = new ViewSetter();
 
+    public static ViewSetter getInstance() {
+        return ourInstance;
+    }
 
-    public ViewSetter(){
+    private ViewSetter(){
         seekBarMap=new HashMap<>();
         controller=new FlightController();
     }
@@ -64,9 +68,9 @@ public  class ViewSetter {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                double v= ((double) progress / (double) seekBar.getMax());
-                SignalModelHandle.getModel().getControls().put(key,v);
-                Log.d("seekValue",v+"");
+                double v = ((double) progress / (double) seekBar.getMax());
+                SignalModelHandle.getModel().setPWMValue(key, v);
+                Log.d("seekValue", v + "");
             }
 
             @Override
@@ -116,7 +120,7 @@ public  class ViewSetter {
                             cstahelper*=-1;
 
                         controlSwitch.setText(modes.get(csStat));
-                        SignalModelHandle.getModel().getControls().put("U", (double) (ConfigurationManager.getConfigManager().getControlModes().get(modes.get(csStat))));
+                        SignalModelHandle.getModel().setPWMValue("U", (double) (ConfigurationManager.getConfigManager().getControlModes().get(modes.get(csStat))));
                         //Write(write);
                     }
                 };
@@ -152,9 +156,9 @@ public  class ViewSetter {
                     public void run() {
 
                         if (autoPilot.isChecked())
-                            setupFlightController();
+                            autoPilotOnEvent();
                         else
-                            controller.Stop();
+                        autoPilotStopEvent();
                         //Write(write);
                     }
                 };
@@ -163,6 +167,12 @@ public  class ViewSetter {
             }
         });
 
+    }
+    public void autoPilotOnEvent(){
+        setupFlightController();
+    }
+    public void autoPilotStopEvent(){
+        controller.Stop();
     }
     private void setupFlightController() {
 

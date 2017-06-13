@@ -1,7 +1,6 @@
 package com.sabareesh.dronedna.WebService;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

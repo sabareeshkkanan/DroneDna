@@ -12,19 +12,21 @@ import com.sabareesh.dronedna.models.HomeLocation;
 public class AltitudeController extends Controller {
 
     private final ControllerStats stats;
+
+    public double getCurrentAltitude() {
+        return currentAltitude;
+    }
+
     double currentAltitude;
 
 
-    private final double idleThrottle;
     double desiredAltitude;
     public AltitudeController(){
        super();
-        double config= (double) ConfigurationManager.getConfigManager().getDefaultValues().get("throttle");
-        idleThrottle=config;
         pidController=new PIDController(1,0.5,0.1);
         pidController.enable();
-        pidController.setInputRange(0, 1100);
-        pidController.setOutputRange(0, 100);
+        pidController.setInputRange(0, 3000);
+     //   pidController.setOutputRange(0, 100);
         pidController.setBoundControl(false);
         pidController.setTolerance(0.1);
        stats=ControllerStats.getInstance();
@@ -43,12 +45,10 @@ public class AltitudeController extends Controller {
     }
     private void process(){
         compute();
-        double tFinal =idleThrottle+acceleration;
-        signalModel.setPWMValue("throttle", tFinal);
 
         stats.setCurrentAltitude(currentAltitude);
         stats.setDesiredAltitude(desiredAltitude);
-        stats.setAltitudeAcceleration(tFinal);
+
 
     }
 
@@ -62,6 +62,8 @@ public class AltitudeController extends Controller {
         double pidDiff=es-previousPid;
         previousPid=es;
         if(pidDiff>0.2)
+            return;
+        if (pidDiff==0)
             return;
         accelerationComputation(pidDiff);
         stats.setPidDiff(pidDiff);

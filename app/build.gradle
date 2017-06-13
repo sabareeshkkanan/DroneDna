@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.sabareesh.dronedna"
         minSdkVersion 22
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -29,15 +29,17 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':iOIOLibAccessory-release')
-    compile project(':iOIOLibAndroid-release')
-    compile project(':iOIOLibAndroidDevice-release')
-    compile project(':iOIOLibBT-release')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile(
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.1'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.1'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.1']
     )
+
+    compile project(':iOIOLibAccessory-release')
+    compile project(':iOIOLibAndroid-release')
+    compile project(':iOIOLibAndroidDevice-release')
+    compile project(':iOIOLibBT-release')
     compile project(':serverlib')
+    compile 'com.android.support:appcompat-v7:23.+'
 }

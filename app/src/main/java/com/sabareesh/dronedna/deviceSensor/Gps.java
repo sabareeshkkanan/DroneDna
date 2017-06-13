@@ -6,10 +6,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.sabareesh.commonlib.ControllerStats;
-import com.sabareesh.dronedna.models.GeoLocation;
+import com.sabareesh.commonlib.models.GeoLocation;
 
 /**
  * Created by sabareesh on 8/17/15.
@@ -36,6 +35,11 @@ public class Gps {
     private boolean updateRecently;
     private double longitude;
 public GeoLocation getSmoothLocation(){
+    //simulate
+    /*
+     double lat= 33.146763;
+    double lng=-117.092667;
+    return new GeoLocation(lat,lng);*/
     return new GeoLocation(latitude,longitude);
 }
 
@@ -62,9 +66,11 @@ public GeoLocation getSmoothLocation(){
     private Gps(LocationManager manager){
         stats= ControllerStats.getInstance();
         this.manager=manager;
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100,0,new MyLocationListener());
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, new MyLocationListener());
         manager.addGpsStatusListener(new GpsStatusListener());
         location=manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(location==null)
+            location=new Location(LocationManager.GPS_PROVIDER);
     }
 
     public Location getLocation() {

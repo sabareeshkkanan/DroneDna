@@ -17,6 +17,7 @@ public abstract class Controller {
     protected PIDController pidController;
     protected Thread loopingThread;
     protected double acceleration;
+    protected int loopInterval=500;
 
     protected double previousPid;
     protected boolean loop;
@@ -46,7 +47,7 @@ public abstract class Controller {
 
                     try {
                         execute();
-                        Thread.sleep(500);
+                        Thread.sleep(loopInterval);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

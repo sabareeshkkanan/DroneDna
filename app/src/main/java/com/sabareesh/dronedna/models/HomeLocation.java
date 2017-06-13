@@ -2,6 +2,7 @@ package com.sabareesh.dronedna.models;
 
 import android.hardware.SensorManager;
 
+import com.sabareesh.commonlib.models.GeoLocation;
 import com.sabareesh.dronedna.WebService.GeoAltitude;
 
 import java.io.IOException;

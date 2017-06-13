@@ -3,11 +3,6 @@ package com.sabareesh.dronedna.WebService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sabareesh.dronedna.WebService.resultModels.GoogleAltitudeJson;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 
@@ -28,14 +23,14 @@ public class GeoAltitude {
     }
     public static double getAltitude(Double latitude, Double longitude) throws IOException {
 
-        return 225;/*
+      //  return 225;
 
         String  url="https://maps.googleapis.com/maps/api/elevation/json?locations="+latitude+","+longitude+"&key=AIzaSyCT1-ZNteaLS-Ix-0OOxdJ7X8Pg-6EHeG4";
         String json=WebClient.get(url);
         ObjectMapper map=new ObjectMapper();
         GoogleAltitudeJson o=map.readValue(json, GoogleAltitudeJson.class);
 
-        return  o.getResults().get(0).elevation;*/
+        return  o.getResults().get(0).elevation;
 
     }
 

@@ -5,9 +5,10 @@ import android.util.Log;
 
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.FlightWarmup.SetupHome;
+import com.sabareesh.dronedna.deviceSensor.Gps;
 import com.sabareesh.dronedna.deviceSensor.SensorMan;
 import com.sabareesh.dronedna.hardware.SignalModelHandle;
-import com.sabareesh.dronedna.models.GeoLocation;
+import com.sabareesh.commonlib.models.GeoLocation;
 
 /**
  * Created by sabareesh on 8/22/15.
@@ -16,27 +17,26 @@ public class FlightController implements Runnable {
     private boolean loop;
     private int loopSleepTime=500;
     private boolean armed;
-    private  AltitudeController altitudeController;
+
     private SteeringController steeringController;
 
 private Thread looperThread;
     public FlightController(){
 
-        GeoLocation geoLocation = getGeoLocation();
 
 
-        altitudeController=new AltitudeController();
-        altitudeController.setDesiredAltitude(geoLocation.getAltitude());
+
+
         steeringController=new SteeringController();
 
-        steeringController.setDesiredLocation(geoLocation);
+
     }
 
     private GeoLocation getGeoLocation() {
         GeoLocation geoLocation=new GeoLocation();
         geoLocation.setAltitude(226);
-        geoLocation.setLatitude(33.143573);
-        geoLocation.setLongitude(-117.085506);
+        geoLocation.setLatitude( 33.177615);
+        geoLocation.setLongitude(-117.085427);
         return geoLocation;
     }
 
@@ -45,7 +45,6 @@ private Thread looperThread;
             return;
         loop=true;
 
-        altitudeController.startLoop();
         steeringController.startLoop();
 
 
@@ -74,6 +73,9 @@ private Thread looperThread;
     @Override
     public void run() {
         initialize();
+        GeoLocation location=Gps.getInstance().getSmoothLocation();
+        location.setAltitude(227);
+        steeringController.setDesiredLocation(location);
         Start();
 
     }
@@ -110,7 +112,6 @@ private Thread looperThread;
     public void Stop() {
 
         loop=false;
-        altitudeController.setLoop(false);
-        steeringController.setLoop(false);
+     steeringController.setLoop(false);
     }
 }

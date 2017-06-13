@@ -13,12 +13,12 @@ public class LatitudeController extends Controller {
     private double desiredLatitude;
 
     public  LatitudeController(){
-        pidController=new PIDController(10000,1000,10);
+        pidController=new PIDController(1000000,1000,0.5);
         pidController.enable();
         pidController.setInputRange(-90, 90);
-        pidController.setOutputRange(-50,50);
-      //  pidController.setBoundControl(false);
-        pidController.setTolerance(0.0000001);
+      //  pidController.setOutputRange(-50,50);
+        pidController.setBoundControl(false);
+        pidController.setTolerance(0.00000001);
 
     }
 
@@ -44,6 +44,9 @@ public class LatitudeController extends Controller {
         else if (pidDiff<-0.5)
             return;
 
+        if(pidDiff==0)
+            return;
+
         accelerationComputation(pidDiff);
 
     }
@@ -64,6 +67,7 @@ public class LatitudeController extends Controller {
         pidController.setSetpoint(desiredLatitude);
     }
     protected void accelerationComputation(double pidDiff) {
+
         if(acceleration>=0) {
             if (pidDiff > 0)
                 acceleration += pidDiff;

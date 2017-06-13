@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.sabareesh.dronedna.deviceSensor.Gps;
 import com.sabareesh.dronedna.deviceSensor.SensorMan;
-import com.sabareesh.dronedna.models.GeoLocation;
+import com.sabareesh.commonlib.models.GeoLocation;
 import com.sabareesh.dronedna.models.HomeLocation;
 
 /**

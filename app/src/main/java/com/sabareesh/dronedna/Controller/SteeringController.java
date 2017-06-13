@@ -1,32 +1,37 @@
 package com.sabareesh.dronedna.Controller;
 
-import android.util.Log;
-
 import com.sabareesh.commonlib.ControllerStats;
 import com.sabareesh.commonlib.Point;
 import com.sabareesh.dronedna.FlightWarmup.ConfigurationManager;
 import com.sabareesh.dronedna.helpers.GeometryHelper;
 import com.sabareesh.dronedna.deviceSensor.Gps;
 import com.sabareesh.dronedna.deviceSensor.SensorMan;
-import com.sabareesh.dronedna.models.GeoLocation;
+import com.sabareesh.commonlib.models.GeoLocation;
 
 /**
  * Created by sabareesh on 8/30/15.
  */
 public class SteeringController extends Controller {
 
+    private final ControllerStats stats;
     private GeoLocation desiredLocation;
+    private AltitudeController altitudeController;
 
     private double idleRoll;
     private double idlePitch;
+    private double idleThrottle;
+private boolean altitudeFlag;
+
+
     private Point finalControlPoint;
-    Point controlCenter=new Point(0,0);
+    private Point controlCenter=new Point(0,0);
 
 
     private LatitudeController latitudeController;
     private LongitudeController longitudeController;
-    Point acceleration;
-
+private     Point acceleration;
+    private double altitudeAcceleration;
+    private double controllerOrientation;
 
 
     public GeoLocation getDesiredLocation() {
@@ -35,16 +40,31 @@ public class SteeringController extends Controller {
 
     public void setDesiredLocation(GeoLocation desiredLocation) {
         this.desiredLocation = desiredLocation;
+        altitudeFlag=true;
         latitudeController.setDesiredLatitude(desiredLocation.getLatitude());
         longitudeController.setDesiredLongitude(desiredLocation.getLongitude());
+        altitudeController.setDesiredAltitude(desiredLocation.getAltitude());
+        controllerOrientation=-90.0;
     }
     public SteeringController(){
         super();
-        idlePitch=(double) ConfigurationManager.getConfigManager().getDefaultValues().get("elevator");
-        idleRoll=(double) ConfigurationManager.getConfigManager().getDefaultValues().get("aileron");
+        fetchIdlingValues();
+
+
         latitudeController=new LatitudeController();
         longitudeController=new LongitudeController();
+        altitudeController=new AltitudeController();
+
+
+        stats=ControllerStats.getInstance();
     }
+
+    private void fetchIdlingValues() {
+        idlePitch=(double) ConfigurationManager.getConfigManager().getDefaultValues().get("elevator");
+        idleRoll=(double) ConfigurationManager.getConfigManager().getDefaultValues().get("aileron");
+        idleThrottle=(double) ConfigurationManager.getConfigManager().getDefaultValues().get("throttle");
+    }
+
     @Override
     public void execute() {
         prepare();
@@ -53,18 +73,31 @@ public class SteeringController extends Controller {
     }
 
     private void prepare() {
-        latitudeController.execute();
-        longitudeController.execute();
-        acceleration=new Point(longitudeController.getAcceleration(),latitudeController.getAcceleration());
+
+        if(altitudeFlag){
+            double diff=altitudeController.getCurrentAltitude()-desiredLocation.getAltitude();
+            if(diff<0)
+                diff*=-1;
+            if(diff<0.2)
+                altitudeFlag=false;
+        }
+        if(!altitudeFlag) {
+            latitudeController.execute();
+            longitudeController.execute();
+        }
+        altitudeController.execute();
+        altitudeAcceleration=altitudeController.getAcceleration();
+        acceleration=new Point(GeometryHelper.round2D(longitudeController.getAcceleration()),GeometryHelper.round2D(latitudeController.getAcceleration()));
 
     }
 
 
     private void OrientationComputation() {
-        ControllerStats stats=ControllerStats.getInstance();
         GeoLocation currentLocation=Gps.getInstance().getSmoothLocation();
-        double angle=GeometryHelper.angleBetween(currentLocation, desiredLocation)-90;
+      //  double angle=GeometryHelper.angleBetween(currentLocation, desiredLocation)+180;
+        double angle=GeometryHelper.angleBetween(controlCenter,acceleration);
         double compass=SensorMan.getSensor().getCompassHeading();
+        compass+=controllerOrientation;
         double correctedOrientation=angle+compass;
 
 
@@ -81,9 +114,9 @@ public class SteeringController extends Controller {
         stats.setCorrectedAngle(correctedOrientation);
         stats.setFinalPoint(finalControlPoint);
         stats.setCompassHeading(compass);
-        stats.setLatitudeAcceleration(acceleration.getX());
-        stats.setLongitudeAcceleration(acceleration.getY());
-
+        stats.setLatitudeAcceleration(acceleration.getY());
+        stats.setLongitudeAcceleration(acceleration.getX());
+        stats.setAltitudeAcceleration(altitudeAcceleration);
 
 
 
@@ -96,9 +129,17 @@ public class SteeringController extends Controller {
 
     }
     private void applySignals(){
+        if (!altitudeFlag) {
+            setPitch(finalControlPoint.getY());
+            setRoll(finalControlPoint.getX());}
+        setThrottle(altitudeAcceleration);
 
-        setRoll(finalControlPoint.getX());
-        setRoll(finalControlPoint.getY());
+    }
+
+    private void setThrottle(double altitudeAcceleration) {
+        double tFinal =idleThrottle+altitudeAcceleration;
+        signalModel.setPWMValue("throttle", tFinal);
+
     }
 
     private void setRoll(double acceleration){

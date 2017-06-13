@@ -1,12 +1,8 @@
-package com.sabareesh.dronedna.models;
+package com.sabareesh.commonlib.models;
 
 import android.location.Location;
 
 import com.sabareesh.commonlib.Point;
-import com.sabareesh.dronedna.WebService.GeoAltitude;
-
-import java.io.IOException;
-
 /**
  * Created by sabareesh on 8/21/15.
  */

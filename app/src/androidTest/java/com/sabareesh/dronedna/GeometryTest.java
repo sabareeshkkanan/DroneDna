@@ -4,7 +4,7 @@ import android.test.InstrumentationTestCase;
 import android.util.Log;
 
 import com.sabareesh.dronedna.helpers.GeometryHelper;
-import com.sabareesh.dronedna.models.Point;
+import com.sabareesh.commonlib.Point ;
 
 /**
  * Created by sabareesh on 8/31/15.

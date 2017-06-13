@@ -12,12 +12,12 @@ public class LongitudeController extends Controller {
     private double longitude;
     private double desiredLongitude;
     public LongitudeController(){
-        pidController=new PIDController(10000,1000,10);
+        pidController=new PIDController(1000000,1000,0.5);
         pidController.enable();
         pidController.setInputRange(-180, 180);
        // pidController.setOutputRange(-50, 50);
         pidController.setBoundControl(false);
-        pidController.setTolerance(0.0000001);
+        pidController.setTolerance(0.00000001);
 
     }
 
@@ -45,7 +45,8 @@ public class LongitudeController extends Controller {
             return;
         else if (pidDiff<-0.5)
             return;
-
+        if(pidDiff==0)
+            return;
         accelerationComputation(pidDiff);
 
 
